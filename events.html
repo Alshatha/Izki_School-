@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدخال فعالية</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            width: 95%;
+            max-width: 500px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1e3c72;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #16325c;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>إدخال فعالية مدرسية</h2>
+
+    <label>المدرسة</label>
+    <select id="school">
+        <option>مدرسة المواهب</option>
+        <option>مدرسة الأجيال السعيدة</option>
+        <option>مدرسة إمطي</option>
+        <option>مدرسة الأزهر بن محمد</option>
+        <option>مدرسة إزكي</option>
+        <option>مدرسة أم أيمن</option>
+        <option>مدرسة محمد بن جعفر</option>
+        <option>مدرسة أم الخير</option>
+        <option>مدرسة عمر بن الخطاب</option>
+        <option>مدرسة مرتفعات إزكي</option>
+        <option>مدرسة الطوق</option>
+        <option>مدرسة القلعة</option>
+        <option>مدرسة البوارق</option>
+        <option>مدرسة صرح المعرفة</option>
+        <option>مدرسة لبيد بن ربيعة</option>
+        <option>مدرسة الشيخ شامس</option>
+        <option>مدرسة القريتين</option>
+        <option>مدرسة الفضل بن الحواري</option>
+        <option>مدرسة الثريا</option>
+        <option>مدرسة سيما ومقزح</option>
+        <option>مدرسة أوس بن ثابت</option>
+        <option>مدرسة مدرعات سلطان عمان</option>
+    </select>
+
+    <label>نوع الفعالية</label>
+    <select id="type">
+        <option>طابور</option>
+        <option>حلقة نقاش</option>
+        <option>محاضرة</option>
+        <option>مسابقات</option>
+        <option>وسائل التواصل الاجتماعي</option>
+        <option>معرض توعوي</option>
+        <option>أخرى</option>
+    </select>
+
+    <label>اسم الفعالية</label>
+    <input type="text" id="eventName" placeholder="مثال: يوم صحي توعوي">
+
+    <label>الفئة المستهدفة (مع العدد)</label>
+    <input type="text" id="target" placeholder="مثال: طلبة الصف الخامس – 60 طالب">
+
+    <label>نبذة عن الفعالية</label>
+    <textarea id="summary" rows="4" placeholder="نبذة مختصرة عن الفعالية"></textarea>
+
+    <button onclick="saveEvent()">حفظ</button>
+</div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBwxdmmszXWUszLo2y_cB-WXApxE1gmc3I",
+  authDomain: "izki-5c802.firebaseapp.com",
+  databaseURL: "https://izki-5c802-default-rtdb.firebaseio.com",
+  projectId: "izki-5c802",
+  storageBucket: "izki-5c802.firebasestorage.app",
+  messagingSenderId: "614609990280",
+  appId: "1:614609990280:web:7c2667d4b1257d4a73653d"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+window.saveEvent = function() {
+
+    const school = document.getElementById("school").value;
+    const type = document.getElementById("type").value;
+    const name = document.getElementById("eventName").value;
+    const target = document.getElementById("target").value;
+    const summary = document.getElementById("summary").value;
+
+    if(name === "" || target === "" || summary === ""){
+        alert("يرجى تعبئة جميع الحقول");
+        return;
+    }
+
+    push(ref(database, "events"), {
+        school: school,
+        type: type,
+        eventName: name,
+        targetGroup: target,
+        summary: summary,
+        createdAt: new Date().toISOString()
+    });
+
+    alert("تم حفظ الفعالية بنجاح ✅");
+
+    document.getElementById("eventName").value = "";
+    document.getElementById("target").value = "";
+    document.getElementById("summary").value = "";
+};
+
+</script>
+
+</body>
+</html>
