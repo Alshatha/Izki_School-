@@ -22,6 +22,7 @@ function login() {
 
     if (users[civil] === pass) {
         localStorage.setItem("login", "true");
+        localStorage.setItem("civil", civil); // 🔥 نحفظ رقم المستخدم
         window.location.href = "home.html";
     } else {
         alert("بيانات الدخول غير صحيحة");
@@ -30,5 +31,15 @@ function login() {
 
 function logout() {
     localStorage.removeItem("login");
+    localStorage.removeItem("civil");
     window.location.href = "index.html";
+}
+
+// حماية الصفحات
+if (window.location.pathname.includes("home.html") ||
+    window.location.pathname.includes("events.html")) {
+
+    if (localStorage.getItem("login") !== "true") {
+        window.location.href = "index.html";
+    }
 }
