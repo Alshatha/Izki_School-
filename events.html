@@ -136,11 +136,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-/* بيانات Cloudinary */
+/* Cloudinary */
 const cloudName = "drjdge60j";
 const uploadPreset = "e6tmihah";
 
 window.saveEvent = async function() {
+
+    const civil = localStorage.getItem("civil"); // 🔥 نجيب رقم المستخدم
+    if(!civil){
+        alert("يجب تسجيل الدخول أولاً");
+        return;
+    }
 
     const school = document.getElementById("school").value;
     const type = document.getElementById("type").value;
@@ -173,7 +179,8 @@ window.saveEvent = async function() {
         imageUrl = data.secure_url;
     }
 
-    await push(ref(database, "events"), {
+    // 🔥 نحفظ داخل مجلد خاص بكل مستخدم
+    await push(ref(database, "events/" + civil), {
         school,
         type,
         eventName: name,
@@ -191,3 +198,4 @@ window.saveEvent = async function() {
 
 </body>
 </html>
+
