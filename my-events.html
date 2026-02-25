@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فعالياتي</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.event-card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+}
+
+.event-card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+<h2>فعالياتي المدرسية</h2>
+
+<div id="eventsContainer"></div>
+
+<button onclick="goBack()">رجوع</button>
+<button onclick="logout()">تسجيل الخروج</button>
+
+</div>
+
+<script src="script.js"></script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBwxdmmszXWUszLo2y_cB-WXApxE1gmc3I",
+  authDomain: "izki-5c802.firebaseapp.com",
+  databaseURL: "https://izki-5c802-default-rtdb.firebaseio.com",
+  projectId: "izki-5c802",
+  storageBucket: "izki-5c802.firebasestorage.app",
+  messagingSenderId: "614609990280",
+  appId: "1:614609990280:web:7c2667d4b1257d4a73653d"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+const civil = localStorage.getItem("civil");
+
+if(!civil){
+    alert("يجب تسجيل الدخول أولاً");
+    window.location.href = "index.html";
+}
+
+const eventsRef = ref(database, "events/" + civil);
+
+onValue(eventsRef, (snapshot) => {
+
+    const container = document.getElementById("eventsContainer");
+    container.innerHTML = "";
+
+    if(!snapshot.exists()){
+        container.innerHTML = "<p>لا توجد فعاليات مسجلة بعد.</p>";
+        return;
+    }
+
+    snapshot.forEach((childSnapshot) => {
+
+        const data = childSnapshot.val();
+
+        container.innerHTML += `
+            <div class="event-card">
+                <h3>${data.eventName}</h3>
+                <p><strong>المدرسة:</strong> ${data.school}</p>
+                <p><strong>نوع الفعالية:</strong> ${data.type}</p>
+                <p><strong>الفئة المستهدفة:</strong> ${data.targetGroup}</p>
+                <p><strong>النبذة:</strong> ${data.summary}</p>
+                <p><strong>التاريخ:</strong> ${new Date(data.createdAt).toLocaleDateString()}</p>
+                ${data.imageUrl ? `<img src="${data.imageUrl}" alt="صورة الفعالية">` : ""}
+            </div>
+        `;
+    });
+
+});
+
+window.goBack = function(){
+    window.location.href = "home.html";
+};
+
+</script>
+
+</body>
+</html>
